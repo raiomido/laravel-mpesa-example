@@ -30,6 +30,5 @@ class AppServiceProvider extends ServiceProvider
             'recaptcha',
             'App\Misc\Services\ReCaptcha@validate'
         );
-        \Laravel\Passport\Passport::withoutCookieSerialization();
     }
 }

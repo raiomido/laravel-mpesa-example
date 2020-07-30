@@ -2,16 +2,9 @@
 
 namespace App;
 
-use App\Misc\Observers\UserActionsObserver;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-use Laravel\Passport\HasApiTokens;
 use Hash;
 
 /**
@@ -34,13 +27,8 @@ use Hash;
  * @property string $active
  * @property string $email_verified_at
  */
-class User extends Authenticatable implements HasMedia, MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable, HasApiTokens, SoftDeletes;
-    use HasMediaTrait {
-        HasMediaTrait::addMedia as parentAddMedia;
-    }
-
     /**
      * The attributes that are mass assignable.
      *
@@ -75,13 +63,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     ];
 
     protected $appends = ['first_name', 'last_name'];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        User::observe(new UserActionsObserver);
-    }
 
     public static function storeValidation($request)
     {
@@ -145,38 +126,9 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         }
     }
 
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class, 'role_user');
-    }
-
     public function account()
     {
         return $this->morphOne(Account::class, 'accountable');
-    }
-
-    public function addMedia($file)
-    {
-        return $this->parentAddMedia($file)
-            ->usingFileName($file->hashName());
-    }
-
-    public function getAvatarAttribute()
-    {
-        return $this->getFirstMedia('avatar');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAvatarLinkAttribute()
-    {
-        $file = $this->getFirstMedia('avatar');
-        if (!$file) {
-            return url('/images/user-avatar-placeholder.png');
-        }
-
-        return $file->getUrl();
     }
 
     public function getFirstNameAttribute()

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
-
 if (!function_exists('site_details')) {
 	function site_details ()
 	{
@@ -21,8 +19,8 @@ if (!function_exists('icons')) {
 }
 
 if (!function_exists('is_active')) {
-	function is_active ($uri): string
-	{
-		return request()->is($uri) ? 'bg-indigo-900 text-white' : 'hover:text-white hover:bg-indigo-700 text-indigo-300';
-	}
+    function is_active ($uri): string
+    {
+        return request()->is($uri) || request()->is($uri.'/*') ? 'bg-theme-blue-deep text-white' : 'hover:text-white hover:bg-blue-700 text-blue-100 focus:bg-blue-700';
+    }
 }

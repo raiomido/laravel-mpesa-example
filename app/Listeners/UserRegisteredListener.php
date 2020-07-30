@@ -33,8 +33,5 @@ class UserRegisteredListener
             'number' => true,
             'balance' => 0,
         ]);
-
-        //Assign user roles
-        $user->roles()->sync(config('misc.settings.default_user_roles'));
     }
 }

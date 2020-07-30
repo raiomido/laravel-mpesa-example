@@ -18,7 +18,7 @@ class UserSeed extends Seeder
                 'id' => 1,
                 'name' => 'Rai Omido',
                 'username' => 'raiomido',
-                'email' => 'raiomido@gmail.com',
+                'email' => env('MAIL_FROM_ADDRESS'),
                 'phone' => NULL,
                 'designation' => NULL,
                 'email_verified_at' => now(),
@@ -30,7 +30,6 @@ class UserSeed extends Seeder
 
         foreach ($users as $user) {
             $u = User::create($user);
-            $u->roles()->sync([1]);
             event(new Registered($u));
         }
     }
