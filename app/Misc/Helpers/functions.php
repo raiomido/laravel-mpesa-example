@@ -23,8 +23,6 @@ if (!function_exists('icons')) {
 if (!function_exists('is_active')) {
 	function is_active ($uri): string
 	{
-//        $str = strtok($uri, '.');
-//        return $uri;
 		return request()->is($uri) ? 'bg-indigo-900 text-white' : 'hover:text-white hover:bg-indigo-700 text-indigo-300';
 	}
 }
