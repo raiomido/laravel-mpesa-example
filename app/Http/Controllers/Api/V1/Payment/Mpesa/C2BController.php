@@ -16,7 +16,7 @@ class C2BController extends Controller
 
     public function confirmTrx(Request $request)
     {
-        $env = env('MPESA_ENVIRONMENT', 'sandbox');
+        $env = config('misc.mpesa.env');
         $confirmation_key = config("misc.mpesa.c2b.{$env}.confirmation_key");
         $short_code = config("misc.mpesa.c2b.{$env}.short_code");
 
@@ -85,8 +85,7 @@ class C2BController extends Controller
     public function register() {
 
         try {
-            $env = env('MPESA_ENVIRONMENT', 'sandbox');
-
+            $env = config('misc.mpesa.env');
             $config = config("misc.mpesa.c2b.{$env}");
             $token = (new TokenGenerator())->generateToken($env);
             $confirmation_url = route('api.mpesa.c2b.confirm', $config['confirmation_key']);
