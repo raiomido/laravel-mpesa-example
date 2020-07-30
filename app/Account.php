@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 /**
@@ -18,13 +17,6 @@ use Illuminate\Support\Str;
 class Account extends Model
 {
     protected $fillable = ['number', 'balance'];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        Account::observe(new \App\Misc\Observers\UserActionsObserver);
-    }
 
     public function accountable()
     {

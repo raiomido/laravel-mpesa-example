@@ -20,10 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/test', 'TestController@index')->name('test');
 
     Route::group(['prefix' => 'mpesa', 'as' => 'mpesa.'], function () {
-        Route::group(['prefix' => 'c2b', 'as' => 'c2b.'], function () {
-            Route::get('/', 'C2BController@index')->name('index');
-        });
+        Route::get('c2b', 'C2BController@index')->name('c2b.index');
+        Route::get('stk-push', 'STKPushController@index')->name('stk-push.index');
     });
-
 });
 

@@ -34,11 +34,6 @@ class Transaction extends Model
 
     public static $enum_status = ["PROCESSING" => "PROCESSING", "COMPLETE" => "COMPLETE", "CANCELLED" => "CANCELLED"];
 
-    public static function boot()
-    {
-        parent::boot();
-        Transaction::observe(new \App\Misc\Observers\UserActionsObserver);
-    }
 
     public function transactable()
     {
