@@ -14,11 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'v1', 'as' => 'api.mpesa.', 'namespace' => 'Api\V1\Payment\Mpesa'], function () {
-    Route::group([ 'as' => 'c2b.'], function () {
-        Route::post('/m-trx/confirm/{confirmation_key}', 'C2BController@confirmTrx')->name('confirm');
-        Route::post('/m-trx/validate/{validation_key}', 'C2BController@validateTrx')->name('validate');
-        Route::post('/m-trx/simulate', 'C2BController@simulate')->name('simulate');
-        Route::post('/m-trx/register', 'C2BController@register')->name('register');
+Route::group(['prefix' => 'v1/m-trx', 'as' => 'api.mpesa.', 'namespace' => 'Api\V1\Payment\Mpesa'], function () {
+
+    Route::group(['prefix' => 'registration', 'as' => 'registration.'], function () {
+        Route::post('register', 'RegistrationController@register')->name('register');
+    });
+
+    Route::group(['prefix' => 'c2b', 'as' => 'c2b.'], function () {
+        Route::post('simulate', 'C2BController@simulate')->name('simulate');
+        Route::post('confirm/{confirmation_key}', 'C2BController@confirmTrx')->name('confirm');
+        Route::post('validate/{validation_key}', 'C2BController@validateTrx')->name('validate');
+    });
+
+    Route::group(['prefix' => 'stk-push', 'as' => 'stk-push.'], function () {
+        Route::post('simulate', 'STKPushController@simulate')->name('simulate');
     });
 });
