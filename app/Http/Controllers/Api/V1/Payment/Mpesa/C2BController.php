@@ -81,26 +81,4 @@ class C2BController extends Controller
         }
         return $feedback;
     }
-
-    public function register() {
-
-        try {
-            $env = config('misc.mpesa.env');
-            $config = config("misc.mpesa.c2b.{$env}");
-            $token = (new TokenGenerator())->generateToken($env);
-            $confirmation_url = route('api.mpesa.c2b.confirm', $config['confirmation_key']);
-            $validation_url = route('api.mpesa.c2b.validate', $config['validation_key']);
-            $short_code = $config['short_code'];
-
-            $response = (new Registrar())->setShortCode($short_code)
-                ->setValidationUrl($validation_url)
-                ->setConfirmationUrl($confirmation_url)
-                ->setToken($token)
-                ->register($env);
-
-        } catch (\ErrorException $e) {
-            return $e->getMessage();
-        }
-        return $response;
-    }
 }
