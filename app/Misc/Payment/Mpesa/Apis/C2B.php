@@ -52,7 +52,7 @@ class C2B extends Validator
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($curl, CURLOPT_HEADER, false);
+//        curl_setopt($curl, CURLOPT_HEADER, false);
 
         return curl_exec($curl);
     }
