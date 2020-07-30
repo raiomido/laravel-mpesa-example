@@ -7,32 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class STKPush
  * @package App
- * @property string $business_short_code
- * @property string $password
- * @property string $timestamp
- * @property string $transaction_type
+ * @property string $result_desc
+ * @property string $result_code
+ * @property string $merchant_request_id
+ * @property string $checkout_request_id
  * @property string $amount
- * @property string $party_a
- * @property string $party_b
+ * @property string $mpesa_receipt_number
+ * @property string $balance
+ * @property string $b2c_utility_account_available_funds
+ * @property string $transaction_date
  * @property string $phone_number
- * @property string $callback_url
- * @property string $account_reference
- * @property string $transaction_desc
  */
 class STKPush extends Model
 {
     protected $fillable = [
-        'business_short_code',
-        'password',
-        'timestamp',
-        'transaction_type',
+        'result_desc',
+        'result_code',
+        'merchant_request_id',
+        'checkout_request_id',
         'amount',
-        'party_a',
-        'party_b',
+        'mpesa_receipt_number',
+        'balance',
+        'b2c_utility_account_available_funds',
+        'transaction_date',
         'phone_number',
-        'callback_url',
-        'account_reference',
-        'transaction_desc',
     ];
 
     protected $table = 'mpesa_stk_push';

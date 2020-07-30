@@ -15,17 +15,15 @@ class CreateMpesaStkPushTable extends Migration
     {
         Schema::create('mpesa_stk_push', function (Blueprint $table) {
             $table->id();
-            $table->string('business_short_code')->nullable();
-            $table->string('password')->nullable();
-            $table->string('timestamp')->nullable();
-            $table->string('transaction_type')->nullable();
+            $table->string('result_desc')->nullable();
+            $table->string('result_code')->nullable();
+            $table->string('merchant_request_id')->nullable();
+            $table->string('checkout_request_id')->nullable();
             $table->string('amount')->nullable();
-            $table->string('party_a')->nullable();
-            $table->string('party_b')->nullable();
+            $table->string('mpesa_receipt_number')->nullable();
+            $table->string('b2c_utility_account_available_funds')->nullable();
+            $table->string('transaction_date')->nullable();
             $table->string('phone_number')->nullable();
-            $table->string('callback_url')->nullable();
-            $table->string('account_reference')->nullable();
-            $table->string('transaction_desc')->nullable();
             $table->timestamps();
         });
     }

@@ -25,5 +25,6 @@ Route::group(['prefix' => 'v1/m-trx', 'as' => 'api.mpesa.', 'namespace' => 'Api\
 
     Route::group(['prefix' => 'stk-push', 'as' => 'stk-push.'], function () {
         Route::post('simulate', 'STKPushController@simulate')->name('simulate');
+        Route::post('confirm/{confirmation_key}', 'STKPushController@confirm')->name('confirm');
     });
 });
