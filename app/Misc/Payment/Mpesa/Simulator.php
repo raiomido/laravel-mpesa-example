@@ -23,7 +23,7 @@ class Simulator extends Validator
      */
     public function simulate() {
 
-        $env = env('MPESA_ENVIRONMENT', 'sandbox');
+        $env = config('misc.mpesa.env');
 
         try {
             $this->validateEndpoints($env);
