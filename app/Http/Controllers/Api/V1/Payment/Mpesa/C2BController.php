@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Payment\Mpesa;
 
 use App\Http\Controllers\Controller;
-use App\Misc\Payment\Mpesa\Registrar;
-use App\Misc\Payment\Mpesa\Simulator;
+use App\Misc\Payment\Mpesa\Apis\C2B;
+use App\Misc\Payment\Mpesa\Apis\C2BRegister;
 use App\Misc\Payment\Mpesa\TokenGenerator;
 use App\MpesaC2B;
 use Illuminate\Http\Request;
@@ -70,7 +70,7 @@ class C2BController extends Controller
     public function simulate(Request $request)
     {
         try {
-            $feedback = (new Simulator())->setShortCode($request->short_code)
+            $feedback = (new C2B())->setShortCode($request->short_code)
                 ->setAmount($request->amount)
                 ->setBillRefNumber($request->bill_ref_number)
                 ->setMsisdn($request->msisdn)
@@ -80,5 +80,28 @@ class C2BController extends Controller
             return $e->getMessage();
         }
         return $feedback;
+    }
+
+    public function register() {
+
+        try {
+            $env = config('misc.mpesa.env');
+            $config = config("misc.mpesa.c2b.{$env}");
+            $token = (new TokenGenerator())->generateToken($env);
+
+            $confirmation_url = route('api.mpesa.c2b.confirm', $config['confirmation_key']);
+            $validation_url = route('api.mpesa.c2b.validate', $config['validation_key']);
+            $short_code = $config['short_code'];
+
+            $response = (new C2BRegister())->setShortCode($short_code)
+                ->setValidationUrl($validation_url)
+                ->setConfirmationUrl($confirmation_url)
+                ->setToken($token)
+                ->register($env);
+
+        } catch (\ErrorException $e) {
+            return $e->getMessage();
+        }
+        return $response;
     }
 }

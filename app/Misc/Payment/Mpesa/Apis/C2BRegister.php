@@ -1,9 +1,10 @@
 <?php
 
 
-namespace App\Misc\Payment\Mpesa;
+namespace App\Misc\Payment\Mpesa\Apis;
+use App\Misc\Payment\Mpesa\Validator;
 
-class Registrar  extends Validator
+class C2BRegister  extends Validator
 {
     protected $default_endpoints = [
         'live' => 'https://api.safaricom.co.ke/mpesa/c2b/v1/registerurl',
