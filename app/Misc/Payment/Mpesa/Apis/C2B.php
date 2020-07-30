@@ -1,10 +1,13 @@
 <?php
 
 
-namespace App\Misc\Payment\Mpesa;
+namespace App\Misc\Payment\Mpesa\Apis;
 
 
-class Simulator extends Validator
+use App\Misc\Payment\Mpesa\TokenGenerator;
+use App\Misc\Payment\Mpesa\Validator;
+
+class C2B extends Validator
 {
     private $command_id = 'CustomerPayBillOnline';
     private $amount = null;
