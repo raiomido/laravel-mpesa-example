@@ -2,24 +2,18 @@
 return [
     'c2b' => [
         'sandbox' => [
-            'short_code' => '600000',
-            'validation_key' => 'FkaQZqoiJzfpS6Bvubk3YjS5nidw8dTc',
-            'confirmation_key' => 'oXwxg19WWki1Tpbl7msKpcF4vF4Db6Pk',
-            'consumer_secret' => 'foUipYJzjgdlaSDN',
-            'consumer_key' => 'UHzOr4RbAhnf4sckdGYzFSqUTDh7Bq58',
-            'endpoints' => [
-                'registration' => 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
-            ],
+            'short_code' => env("SHORT_CODE"),
+            'validation_key' => env("VALIDATION_KEY"),
+            'confirmation_key' => env("CONFIRMATION_KEY"),
+            'consumer_secret' => env("CONSUMER_SECRET"),
+            'consumer_key' => env("CONSUMER_SECRET"),
         ],
         'live' => [
-            'short_code' => '',
-            'validation_key' => '',
-            'confirmation_key' => '',
-            'consumer_secret' => '',
-            'consumer_key' => '',
-            'endpoints' => [
-                'registration' => ''
-            ],
+            'short_code' => env("PROD_SHORT_CODE"),
+            'validation_key' => env("PROD_VALIDATION_KEY"),
+            'confirmation_key' => env("PROD_CONFIRMATION_KEY"),
+            'consumer_secret' => env("PROD_CONSUMER_SECRET"),
+            'consumer_key' => env("PROD_CONSUMER_SECRET"),
         ],
     ]
 ];
