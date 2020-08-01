@@ -27,6 +27,7 @@ class STKPushSimulateRequest extends FormRequest
             'sender_phone' => ['required', 'max:191'],
             'payer_phone' => ['required', 'max:191'],
             'amount' => ['required', 'numeric'],
+            'account_reference' => ['required', 'max:191'],
         ];
     }
 }

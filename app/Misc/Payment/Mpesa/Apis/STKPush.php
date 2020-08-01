@@ -24,7 +24,7 @@ class STKPush extends Validator
     private $callback_url;
     private $account_reference;
     private $transaction_type = 'CustomerPayBillOnline';
-    private $remarks;
+    private $remarks = 'Pay your bill';
 
     private $response;
     private $failed = false;
