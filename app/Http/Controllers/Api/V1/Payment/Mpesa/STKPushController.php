@@ -12,6 +12,8 @@ class STKPushController extends Controller
     public function simulate(STKPushSimulateRequest $request)
     {
         $env = config('misc.mpesa.env', 'sandbox');
+        $response_code = 400;
+        $response_message = 'An error occurred';
 
         if ($config = config("misc.mpesa.stk_push.{$env}")) {
             $init = (new STKPush())
@@ -25,15 +27,19 @@ class STKPushController extends Controller
                 ->setCallbackUrl(route('api.mpesa.stk-push.confirm', $config['confirmation_key']))
                 ->simulate($env);
 
-            if ($init->failed()) {
-                return response()->json([
-                    'message' => $init->getResponse()
-                ], 400);
+            if (!$init->failed()) {
+                $response_code = 200;
             }
+
+            $response_message = $init->getResponse();
+
+        } else if (!$config) {
+            $response_message = 'Some important parameters are missing';
         }
+
         return response()->json([
-            'message' => $init->getResponse()
-        ], 200);
+            'message' => $response_message
+        ], $response_code);
     }
 
     public function confirm(Request $request)
