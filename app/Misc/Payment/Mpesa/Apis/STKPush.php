@@ -81,27 +81,30 @@ class STKPush extends Validator
 
     public function confirm(Request $request) {
 
-        $merchant_request_id = $request->Body->stkCallback->MerchantRequestID;
-        $checkout_request_id = $request->Body->stkCallback->CheckoutRequestID;
+
+        $payload = json_decode($request->getContent());
+
+        $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
+        $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
 
         $stk_push = \App\STKPush::where('merchant_request_id', $merchant_request_id)
             ->where('checkout_request_id', $checkout_request_id)
             ->first();
 
-        if (property_exists($request,'Body') && $request->Body->stkCallback->ResultCode == '0') {
+        if (property_exists($payload,'Body') && $payload->Body->stkCallback->ResultCode == '0') {
 
             try {
                 $data = [
-                    'result_desc' => $request->Body->stkCallback->ResultDesc,
-                    'result_code' => $request->Body->stkCallback->ResultCode,
+                    'result_desc' => $payload->Body->stkCallback->ResultDesc,
+                    'result_code' => $payload->Body->stkCallback->ResultCode,
                     'merchant_request_id' => $merchant_request_id,
                     'checkout_request_id' => $checkout_request_id,
-                    'amount' => $request->stkCallback->Body->CallbackMetadata->Item[0]->Value,
-                    'mpesa_receipt_number' => $request->Body->stkCallback->CallbackMetadata->Item[1]->Value,
-                    'balance' => $request->stkCallback->Body->CallbackMetadata->Item[2]->Value,
-                    'b2c_utility_account_available_funds' => $request->Body->stkCallback->CallbackMetadata->Item[3]->Value,
-                    'transaction_date' => $request->Body->stkCallback->CallbackMetadata->Item[4]->Value,
-                    'phone_number' => $request->Body->stkCallback->CallbackMetadata->Item[5]->Value,
+                    'amount' => $payload->stkCallback->Body->CallbackMetadata->Item[0]->Value,
+                    'mpesa_receipt_number' => $payload->Body->stkCallback->CallbackMetadata->Item[1]->Value,
+                    'balance' => $payload->stkCallback->Body->CallbackMetadata->Item[2]->Value,
+                    'b2c_utility_account_available_funds' => $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value,
+                    'transaction_date' => $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value,
+                    'phone_number' => $payload->Body->stkCallback->CallbackMetadata->Item[5]->Value,
                 ];
 
                 if($stk_push) {
