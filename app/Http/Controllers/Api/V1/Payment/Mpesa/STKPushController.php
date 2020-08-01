@@ -20,14 +20,16 @@ class STKPushController extends Controller
                 ->setAmount($request->amount)
                 ->setSenderPhone($request->sender_phone)
                 ->setPayerPhone($request->payer_phone)
+                ->setAccountReference($request->account_reference)
                 ->setReceivingShortcode($config['short_code'])
                 ->setCallbackUrl(route('api.mpesa.stk-push.confirm', $config['confirmation_key']))
                 ->simulate($env);
 
             if ($init->failed()) {
-                //do whatever
+                return response()->json([
+                    'message' => $init->getResponse()
+                ], 200);
             }
-//            return $init->getResponse();
         }
         return response()->json([
             'message' => $init->getResponse()
