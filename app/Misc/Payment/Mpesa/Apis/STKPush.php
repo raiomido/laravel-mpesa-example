@@ -99,12 +99,12 @@ class STKPush extends Validator
                     'result_code' => $payload->Body->stkCallback->ResultCode,
                     'merchant_request_id' => $merchant_request_id,
                     'checkout_request_id' => $checkout_request_id,
-                    'amount' => $payload->stkCallback->Body->CallbackMetadata->Item[0]->Value,
-                    'mpesa_receipt_number' => $payload->Body->stkCallback->CallbackMetadata->Item[1]->Value,
-                    'balance' => $payload->stkCallback->Body->CallbackMetadata->Item[2]->Value,
-                    'b2c_utility_account_available_funds' => $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value,
-                    'transaction_date' => $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value,
-                    'phone_number' => $payload->Body->stkCallback->CallbackMetadata->Item[5]->Value,
+                    'amount' => $payload->Body->CallbackMetadata->Item[0]->Value,
+                    'mpesa_receipt_number' => $payload->Body->CallbackMetadata->Item[1]->Value,
+                    'balance' => $payload->Body->CallbackMetadata->Item[2]->Value,
+                    'b2c_utility_account_available_funds' => $payload->Body->CallbackMetadata->Item[3]->Value,
+                    'transaction_date' => $payload->Body->CallbackMetadata->Item[4]->Value,
+                    'phone_number' => $payload->Body->CallbackMetadata->Item[5]->Value,
                 ];
 
                 if($stk_push) {
