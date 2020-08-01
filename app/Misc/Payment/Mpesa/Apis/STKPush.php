@@ -1,13 +1,10 @@
 <?php
 
-
 namespace App\Misc\Payment\Mpesa\Apis;
-
 
 use App\Misc\Payment\Mpesa\TokenGenerator;
 use App\Misc\Payment\Mpesa\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class STKPush extends Validator
 {
@@ -25,16 +22,22 @@ class STKPush extends Validator
     private $callback_url;
     private $account_reference;
     private $transaction_type = 'CustomerPayBillOnline';
-    private $remarks = 'Pay your bill';
+    private $remarks;
 
-    private $response;
     private $failed = false;
+    private $response = 'An an unknown error occurred';
 
     public function simulate(string $env)
     {
 
-        $this->validateEndpoints($env);
-        $token = (new TokenGenerator())->generateToken($env);
+        try {
+            $this->validateEndpoints($env);
+            $token = (new TokenGenerator())->generateToken($env);
+
+        } catch (\Exception $e) {
+            $this->failed = true;
+            $this->response = $e->getMessage();
+        }
 
         $timestamp = '20' . date("ymdhis");
 
@@ -68,11 +71,17 @@ class STKPush extends Validator
 
         $response = json_decode(curl_exec($curl));
 
-        if(property_exists($response,'Body') &&  $response->Body->stkCallback->ResultCode == '0') {
+        if (property_exists($response, 'Body') && $response->Body->stkCallback->ResultCode == '0') {
+
             \App\STKPush::create([
                 'merchant_request_id' => $response->Body->stkCallback->MerchantRequestID,
-                'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID,
+                'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID
             ]);
+
+        } else {
+
+            $this->failed = true;
+
         }
 
         $this->response = $response;
@@ -80,20 +89,17 @@ class STKPush extends Validator
         return $this;
     }
 
-    public function confirm(Request $request) {
-
+    public function confirm(Request $request)
+    {
         $payload = json_decode($request->getContent());
 
-        Storage::disk('local')->put('payload.txt', $request->getContent());
+        if (property_exists($payload, 'Body') && $payload->Body->stkCallback->ResultCode == '0') {
 
-        $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
-        $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
+            $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
+            $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
 
-        $stk_push = \App\STKPush::where('merchant_request_id', $merchant_request_id)
-            ->where('checkout_request_id', $checkout_request_id)
-            ->first();
-
-        if (property_exists($payload,'Body') && $payload->Body->stkCallback->ResultCode == '0') {
+            $stk_push_model = \App\STKPush::where('merchant_request_id', $merchant_request_id)
+                ->where('checkout_request_id', $checkout_request_id)->first();
 
             $data = [
                 'result_desc' => $payload->Body->stkCallback->ResultDesc,
@@ -102,14 +108,14 @@ class STKPush extends Validator
                 'checkout_request_id' => $checkout_request_id,
                 'amount' => $payload->Body->stkCallback->CallbackMetadata->Item[0]->Value,
                 'mpesa_receipt_number' => $payload->Body->stkCallback->CallbackMetadata->Item[1]->Value,
-                'balance' => $payload->Body->stkCallback->CallbackMetadata->Item[2]->Value,
-                'b2c_utility_account_available_funds' => $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value,
-                'transaction_date' => $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value,
-                'phone_number' => $payload->Body->stkCallback->CallbackMetadata->Item[5]->Value,
+                'transaction_date' => $payload->Body->stkCallback->CallbackMetadata->Item[2]->Value,
+                'phone_number' => $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value,
             ];
 
-            if($stk_push) {
-                $stk_push->fill($data)->save();
+            if ($stk_push_model) {
+
+                $stk_push_model->fill($data)->save();
+
             } else {
                 \App\STKPush::create($data);
             }
@@ -184,19 +190,13 @@ class STKPush extends Validator
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return mixed
-     */
     public function failed()
     {
         return $this->failed;
+    }
+
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

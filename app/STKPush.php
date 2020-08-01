@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $checkout_request_id
  * @property string $amount
  * @property string $mpesa_receipt_number
- * @property string $balance
- * @property string $b2c_utility_account_available_funds
  * @property string $transaction_date
  * @property string $phone_number
  */
@@ -27,8 +25,6 @@ class STKPush extends Model
         'checkout_request_id',
         'amount',
         'mpesa_receipt_number',
-        'balance',
-        'b2c_utility_account_available_funds',
         'transaction_date',
         'phone_number',
     ];

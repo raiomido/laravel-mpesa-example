@@ -3,23 +3,24 @@
 namespace App\Http\Controllers\Api\V1\Payment\Mpesa;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\STKPushSimulateRequest;
+use App\Http\Requests\MpesaSTKPushSimulateRequest;
 use App\Misc\Payment\Mpesa\Apis\STKPush;
-use App\Misc\Services\Notifier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class STKPushController extends Controller
 {
-    private $result_code = 1; // Reject transaction
-    private $response_code = 400;
-    private $response_message = 'An error occurred';
+    private $result_desc = 'An error occurred';
+    private $result_code = 1;
+    private $http_code = 400;
 
-    public function simulate(STKPushSimulateRequest $request)
+    public function simulate(MpesaSTKPushSimulateRequest $request)
     {
         $env = config('misc.mpesa.env', 'sandbox');
 
         if ($config = config("misc.mpesa.stk_push.{$env}")) {
-            $init = (new STKPush())
+
+            $stk_push_simulator = (new STKPush())
                 ->setShortCode($config['short_code'])
                 ->setPassKey($config['pass_key'])
                 ->setAmount($request->amount)
@@ -28,21 +29,25 @@ class STKPushController extends Controller
                 ->setAccountReference($request->account_reference)
                 ->setReceivingShortcode($config['short_code'])
                 ->setCallbackUrl(route('api.mpesa.stk-push.confirm', $config['confirmation_key']))
+                ->setRemarks('Pay your bill')
                 ->simulate($env);
 
-            if (!$init->failed()) {
-                $this->response_code = 200;
+            if (! $stk_push_simulator->failed()) {
+
+                $this->http_code = 200;
+
             }
 
-            $this->response_message = $init->getResponse();
+            $this->result_desc = $stk_push_simulator->getResponse();
 
-        } else if (!$config) {
-            $this->response_message = 'Some important parameters are missing';
+        } elseif (!$config) {
+            $this->result_desc = 'STK Push request failed: Missing important parameters';
         }
 
         return response()->json([
-            'message' => $this->response_message
-        ], $this->response_code);
+            'message' => $this->result_desc
+        ], $this->http_code);
+
     }
 
     public function confirm(Request $request)
@@ -56,31 +61,23 @@ class STKPushController extends Controller
 
             if ($stk_push_confirm->failed()) {
 
-                # Send slack notification if fails
-                (new Notifier())->sendSlackNotification($stk_push_confirm->getResponse());
+                Log::error($stk_push_confirm->getResponse());
 
             } else {
-                //Accept transaction
-                $this->result_code = '00000000';
-                $this->response_message = 'Success';
+                $this->result_code = 0;
+                $this->result_desc = 'Success';
             }
-
-            return response()->json([
-                'ResultCode' => $this->result_code,
-                'ResultDesc' => $this->response_message,
-            ]);
 
         } else {
 
-            $this->response_message = 'STK Push failed: Confirmation key mismatch';
+            $this->result_desc = 'STK Push confirmation failed: Confirmation key mismatch';
+            Log::error($this->result_desc);
 
-            (new Notifier())->sendSlackNotification($this->response_message);
-
-            //Respond to Safaricom = Reject transaction
-            return response()->json([
-                'ResultCode' => 1,
-                'ResultDesc' => $this->response_message,
-            ]);
         }
+
+        return response()->json([
+            'ResultCode' => $this->result_code,
+            'ResultDesc' => $this->result_desc,
+        ]);
     }
 }

@@ -22,7 +22,6 @@ class CreateMpesaStkPushTable extends Migration
             $table->string('amount')->nullable();
             $table->string('balance')->nullable();
             $table->string('mpesa_receipt_number')->nullable();
-            $table->string('b2c_utility_account_available_funds')->nullable();
             $table->string('transaction_date')->nullable();
             $table->string('phone_number')->nullable();
             $table->timestamps();

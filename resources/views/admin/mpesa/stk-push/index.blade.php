@@ -21,6 +21,9 @@
                             <thead>
                                 <tr>
                                     <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                        Mpesa Rcpt No
+                                    </th>
+                                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                         Phone
                                     </th>
                                     <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -33,13 +36,16 @@
                                         Amount
                                     </th>
                                     <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                        Balance
+                                        Res Code
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
                                 @foreach($data as $dt)
                                     <tr>
+                                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium text-gray-900">
+                                            {{$dt->mpesa_receipt_number}}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium text-gray-900">
                                             {{$dt->phone_number}}
                                         </td>
@@ -53,7 +59,7 @@
                                             {{$dt->amount}}
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                                            {{$dt->balance}}
+                                            {{$dt->result_code}}
                                         </td>
                                     </tr>
                                 @endforeach
