@@ -84,7 +84,7 @@ class STKPush extends Validator
 
         $payload = json_decode($request->getContent());
 
-        Storage::put(resource_path('temp/payload.txt'), $payload);
+        Storage::disk('local')->put('payload.txt', $request->getContent());
 
         $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
         $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
