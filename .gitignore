@@ -15,5 +15,6 @@ yarn-error.log
 /cgi-bin
 /.htaccess
 /.idea
+/resources/temp/*
 /Envoy.blade.php
 

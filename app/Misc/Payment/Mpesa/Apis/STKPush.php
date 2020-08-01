@@ -7,6 +7,7 @@ namespace App\Misc\Payment\Mpesa\Apis;
 use App\Misc\Payment\Mpesa\TokenGenerator;
 use App\Misc\Payment\Mpesa\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class STKPush extends Validator
 {
@@ -81,8 +82,9 @@ class STKPush extends Validator
 
     public function confirm(Request $request) {
 
-
         $payload = json_decode($request->getContent());
+
+        Storage::put(resource_path('temp/payload.txt'), $payload);
 
         $merchant_request_id = $payload->Body->stkCallback->MerchantRequestID;
         $checkout_request_id = $payload->Body->stkCallback->CheckoutRequestID;
@@ -93,31 +95,25 @@ class STKPush extends Validator
 
         if (property_exists($payload,'Body') && $payload->Body->stkCallback->ResultCode == '0') {
 
-            try {
-                $data = [
-                    'result_desc' => $payload->Body->stkCallback->ResultDesc,
-                    'result_code' => $payload->Body->stkCallback->ResultCode,
-                    'merchant_request_id' => $merchant_request_id,
-                    'checkout_request_id' => $checkout_request_id,
-                    'amount' => $payload->Body->CallbackMetadata->Item[0]->Value,
-                    'mpesa_receipt_number' => $payload->Body->CallbackMetadata->Item[1]->Value,
-                    'balance' => $payload->Body->CallbackMetadata->Item[2]->Value,
-                    'b2c_utility_account_available_funds' => $payload->Body->CallbackMetadata->Item[3]->Value,
-                    'transaction_date' => $payload->Body->CallbackMetadata->Item[4]->Value,
-                    'phone_number' => $payload->Body->CallbackMetadata->Item[5]->Value,
-                ];
+            $data = [
+                'result_desc' => $payload->Body->stkCallback->ResultDesc,
+                'result_code' => $payload->Body->stkCallback->ResultCode,
+                'merchant_request_id' => $merchant_request_id,
+                'checkout_request_id' => $checkout_request_id,
+                'amount' => $payload->Body->stkCallback->CallbackMetadata->Item[0]->Value,
+                'mpesa_receipt_number' => $payload->Body->stkCallback->CallbackMetadata->Item[1]->Value,
+                'balance' => $payload->Body->stkCallback->CallbackMetadata->Item[2]->Value,
+                'b2c_utility_account_available_funds' => $payload->Body->stkCallback->CallbackMetadata->Item[3]->Value,
+                'transaction_date' => $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value,
+                'phone_number' => $payload->Body->stkCallback->CallbackMetadata->Item[5]->Value,
+            ];
 
-                if($stk_push) {
-                    $stk_push->fill($data)->save();
-                } else {
-                    \App\STKPush::create($data);
-                }
-            } catch (\Exception $e) {
-
-                $this->failed = true;
-
-                $this->response = $e->getMessage();
+            if($stk_push) {
+                $stk_push->fill($data)->save();
+            } else {
+                \App\STKPush::create($data);
             }
+
         } else {
             $this->failed = true;
         }

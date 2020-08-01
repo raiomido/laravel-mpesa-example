@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\STKPushSimulateRequest;
 use App\Misc\Payment\Mpesa\Apis\STKPush;
 use App\Misc\Services\Notifier;
-use App\Notifications\MpesaCallbackFailedNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 
 class STKPushController extends Controller
 {
