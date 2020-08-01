@@ -49,7 +49,7 @@ class STKPushController extends Controller
 
     public function confirm(Request $request)
     {
-        $env = config('misc.mpesa.stk_push', 'sandbox');
+        $env = config('misc.mpesa.env', 'sandbox');
         $confirmation_key = config("misc.mpesa.stk_push.{$env}.confirmation_key");
 
         if ($request->confirmation_key == $confirmation_key) {
