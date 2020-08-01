@@ -21,12 +21,12 @@ return [
         'sandbox' => [
             'pass_key' => env("LIPA_NA_MPESA_ONLINE_PASS_KEY"),
             'confirmation_key' => env("CONFIRMATION_KEY"),
-            'short_code' => env("SHORT_CODE"),
+            'short_code' => env("LIPA_NA_MPESA_SHORT_CODE"),
         ],
         'live' => [
             'pass_key' => env("PROD_LIPA_NA_MPESA_ONLINE_PASS_KEY"),
             'confirmation_key' => env("PROD_CONFIRMATION_KEY"),
-            'short_code' => env("PROD_SHORT_CODE"),
+            'short_code' => env("PROD_LIPA_NA_MPESA_SHORT_CODE"),
         ]
     ],
 
