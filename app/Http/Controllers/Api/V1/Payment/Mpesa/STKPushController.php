@@ -28,12 +28,12 @@ class STKPushController extends Controller
             if ($init->failed()) {
                 return response()->json([
                     'message' => $init->getResponse()
-                ], 200);
+                ], 400);
             }
         }
         return response()->json([
             'message' => $init->getResponse()
-        ], 400);
+        ], 200);
     }
 
     public function confirm(Request $request)
