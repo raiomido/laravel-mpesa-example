@@ -67,7 +67,7 @@ class STKPush extends Validator
 
         $response = json_decode(curl_exec($curl));
 
-        if($response->Body->stkCallback->ResultCode == '0') {
+        if(property_exists($response,'Body') &&  $response->Body->stkCallback->ResultCode == '0') {
             \App\STKPush::create([
                 'merchant_request_id' => $response->Body->stkCallback->MerchantRequestID,
                 'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID,
@@ -88,7 +88,7 @@ class STKPush extends Validator
             ->where('checkout_request_id', $checkout_request_id)
             ->first();
 
-        if ($request->Body->stkCallback->ResultCode == '0') {
+        if (property_exists($request,'Body') && $request->Body->stkCallback->ResultCode == '0') {
 
             $data = [
                 'result_desc' => $request->Body->stkCallback->ResultDesc,
@@ -117,7 +117,7 @@ class STKPush extends Validator
 
     public function setPassKey(string $pass_key)
     {
-        $this->$pass_key = $pass_key;
+        $this->pass_key = $pass_key;
 
         return $this;
     }
