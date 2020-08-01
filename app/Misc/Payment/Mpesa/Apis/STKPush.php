@@ -90,23 +90,30 @@ class STKPush extends Validator
 
         if (property_exists($request,'Body') && $request->Body->stkCallback->ResultCode == '0') {
 
-            $data = [
-                'result_desc' => $request->Body->stkCallback->ResultDesc,
-                'result_code' => $request->Body->stkCallback->ResultCode,
-                'merchant_request_id' => $merchant_request_id,
-                'checkout_request_id' => $checkout_request_id,
-                'amount' => $request->stkCallback->Body->CallbackMetadata->Item[0]->Value,
-                'mpesa_receipt_number' => $request->Body->stkCallback->CallbackMetadata->Item[1]->Value,
-                'balance' => $request->stkCallback->Body->CallbackMetadata->Item[2]->Value,
-                'b2c_utility_account_available_funds' => $request->Body->stkCallback->CallbackMetadata->Item[3]->Value,
-                'transaction_date' => $request->Body->stkCallback->CallbackMetadata->Item[4]->Value,
-                'phone_number' => $request->Body->stkCallback->CallbackMetadata->Item[5]->Value,
-            ];
+            try {
+                $data = [
+                    'result_desc' => $request->Body->stkCallback->ResultDesc,
+                    'result_code' => $request->Body->stkCallback->ResultCode,
+                    'merchant_request_id' => $merchant_request_id,
+                    'checkout_request_id' => $checkout_request_id,
+                    'amount' => $request->stkCallback->Body->CallbackMetadata->Item[0]->Value,
+                    'mpesa_receipt_number' => $request->Body->stkCallback->CallbackMetadata->Item[1]->Value,
+                    'balance' => $request->stkCallback->Body->CallbackMetadata->Item[2]->Value,
+                    'b2c_utility_account_available_funds' => $request->Body->stkCallback->CallbackMetadata->Item[3]->Value,
+                    'transaction_date' => $request->Body->stkCallback->CallbackMetadata->Item[4]->Value,
+                    'phone_number' => $request->Body->stkCallback->CallbackMetadata->Item[5]->Value,
+                ];
 
-            if($stk_push) {
-                $stk_push->fill($data)->save();
-            } else {
-                \App\STKPush::create($data);
+                if($stk_push) {
+                    $stk_push->fill($data)->save();
+                } else {
+                    \App\STKPush::create($data);
+                }
+            } catch (\Exception $e) {
+
+                $this->failed = true;
+
+                $this->response = $e->getMessage();
             }
         } else {
             $this->failed = true;
