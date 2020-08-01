@@ -11,7 +11,7 @@ class STKPushController extends Controller
 {
     public function simulate(STKPushSimulateRequest $request)
     {
-        $env = config('misc.mpesa.stk_push', 'sandbox');
+        $env = config('misc.mpesa.env', 'sandbox');
 
         if ($config = config("misc.mpesa.stk_push.{$env}")) {
             $init = (new STKPush())
@@ -27,10 +27,10 @@ class STKPushController extends Controller
             if ($init->failed()) {
                 //do whatever
             }
-            return $init->getResponse();
+//            return $init->getResponse();
         }
         return response()->json([
-            'message' => 'Some config params are missing'
+            'message' => $init->getResponse()
         ], 400);
     }
 
@@ -41,8 +41,19 @@ class STKPushController extends Controller
 
         if ($request->confirmation_key == $confirmation_key) {
             (new STKPush())->confirm($request);
+
+            //Respond to Safaricom = Accept transaction
+            return response()->json([
+                'ResultCode' => 00000000,
+                'ResultDesc' => "Success",
+            ]);
+
         } else {
-            // Send your self a notification
+            //Respond to Safaricom = Reject transaction
+            return response()->json([
+                'ResultCode' => 1,
+                'ResultDesc' => "Confirmation key mismatch",
+            ]);
         }
     }
 }
