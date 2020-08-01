@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class STKPushSimulateRequest extends FormRequest
+class MpesaSTKPushSimulateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,10 @@ class STKPushSimulateRequest extends FormRequest
     public function rules()
     {
         return [
-            'sender_phone' => ['required', 'max:191'],
-            'payer_phone' => ['required', 'max:191'],
             'amount' => ['required', 'numeric'],
-            'account_reference' => ['required', 'max:191'],
+            'sender_phone' => ['required', 'max:20'],
+            'payer_phone' => ['required', 'max:20'],
+            'account_reference' => ['required', 'max:20'],
         ];
     }
 }
